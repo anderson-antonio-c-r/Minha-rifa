@@ -20,10 +20,11 @@
     "nodemon": "^3.1.10"
   },
   "engines": {
-    "node": ">=25.0"
+    "node": ">=25.1.0"
   },
   "author": "Anderson Antonio",
   "license": "MIT"
 }
+
 
 
