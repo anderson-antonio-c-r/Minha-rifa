@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rifa Mega Premiada</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.2em;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    p.description {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    button {
+      background-color: #FF5733;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #C70039;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    a {
+      text-decoration: none;
+      color: #4CAF50;
+      margin: 0 10px;
+      font-weight: bold;
+    }
+
+    a:hover {
+      color: #388E3C;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Rifa Mega Premiada</h1>
+    <p>Participe da nossa rifa e concorra a prêmios incríveis! Cada número custa R$ <span id="price">10</span>.</p>
+  </header>
+
+  <div class="container">
+    <button id="buyBtn">Comprar Rifa</button>
+    <button onclick="alert('Em breve!')">Ver Números</button>
+    <div id="status"></div>
+    <p style="margin-top: 20px;">
+      <a href="/admin" target="_blank">Painel Admin</a>
+    </p>
+  </div>
+
+  <script src="raffle.js"></script>
+  <script>
+    const statusDiv = document.getElementById('status');
+
+    document.getElementById('buyBtn').addEventListener('click', async () => {
+      statusDiv.textContent = "Aguarde, processando...";
+      try {
+        const res = await fetch('/buy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ price: Number(document.getElementById('price').textContent) })
+        });
+        const data = await res.json();
+
+        if (data.init_point) {
+          statusDiv.textContent = `Número reservado: ${data.number}. Redirecionando para pagamento...`;
+          setTimeout(() => window.location.href = data.init_point, 1500);
+        } else {
+          statusDiv.textContent = "Erro: não foi possível gerar a rifa.";
+        }
+      } catch (err) {
+        console.error(err);
+        statusDiv.textContent = "Erro de conexão com o servidor.";
+      }
+    });
+  </script>
+
+</body>
+</html>
