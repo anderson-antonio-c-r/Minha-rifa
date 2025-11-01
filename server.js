@@ -27,11 +27,10 @@ const MP_PUBLIC_KEY = MODE === 'production'
   : process.env.MP_PUBLIC_KEY_SANDBOX;
 
 if (!MP_ACCESS_TOKEN) console.warn('⚠️ MP access token não encontrado para o modo', MODE);
-
 MercadoPago.configure({ access_token: MP_ACCESS_TOKEN });
 
 // --------------------------
-// BANCO DE DADOS (SQLite) - Windows seguro
+// BANCO DE DADOS (SQLite)
 // --------------------------
 let db;
 try {
@@ -47,10 +46,11 @@ try {
       created_at INTEGER
     );
   `);
+
   console.log('✅ Banco inicializado com sucesso');
 } catch (err) {
   console.error('❌ Erro ao inicializar o banco SQLite:', err);
-  process.exit(1); // Sai do servidor se o banco não abrir
+  process.exit(1);
 }
 
 // --------------------------
@@ -60,7 +60,6 @@ try {
   const count = db.prepare('SELECT COUNT(*) as c FROM tickets').get().c;
   if (count === 0) {
     const insert = db.prepare("INSERT INTO tickets (number, status, created_at) VALUES (?, 'available', ?)");
-
     const now = Date.now();
     const insertMany = db.transaction((arr) => {
       for (const n of arr) insert.run(n, now);
